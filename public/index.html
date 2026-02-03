@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mi E-commerce — Demo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="/">Los Palomos</a>
+        <nav class="nav">
+          <a href="#features">Características</a>
+          <a href="#shop">Tienda</a>
+          <a href="#contact">Contacto</a>
+          <button class="cart" aria-label="Ver carrito">🛒 <span class="cart-count" aria-hidden="true">0</span></button>
+        </nav>
+        <button class="nav-toggle" aria-label="Abrir menú">☰</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <h1 class="title">Alquila experiencias únicas</h1>
+          <p class="subtitle">Vinos selectos y casas de campo para escapadas inolvidables.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#shop">Ir a la tienda</a>
+            <a class="btn ghost" href="#rental">Reservar casa</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section features">
+        <div class="container">
+          <h2>Características</h2>
+          <div class="grid">
+            <article class="feature">
+              <h3>Selección premium</h3>
+              <p>Vinos y productos curados por expertos.</p>
+            </article>
+            <article class="feature">
+              <h3>Reservas flexibles</h3>
+              <p>Ajusta tus fechas con facilidad y sin complicaciones.</p>
+            </article>
+            <article class="feature">
+              <h3>Envío seguro</h3>
+              <p>Empaques y envíos pensados para mantener la calidad.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="shop" class="section shop">
+        <div class="container">
+          <h2>Tienda</h2>
+          <div class="controls">
+            <input id="search" type="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+            <select id="category">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="grid products" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <div id="product-modal" class="modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <button class="modal-close" aria-label="Cerrar">×</button>
+        <div class="modal-body"></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; 2026 Los Palomos · Demo</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/main.js" defer></script>
+  </body>
+</html>
