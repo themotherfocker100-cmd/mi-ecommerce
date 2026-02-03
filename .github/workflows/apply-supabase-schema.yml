@@ -1,0 +1,39 @@
+name: Apply Supabase Schema
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  apply-schema:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show environment (debug)
+        run: |
+          echo "SUPABASE_URL is set? ${SUPABASE_URL:+yes}"
+          echo "SUPABASE_SERVICE_ROLE_KEY is set? ${SUPABASE_SERVICE_ROLE_KEY:+yes}"
+
+      - name: Install supabase CLI
+        run: npm install -g supabase
+
+      - name: Apply SQL schema
+        run: |
+          echo "Applying supabase/schema.sql"
+          if [ -f supabase/schema.sql ]; then
+            supabase db query < supabase/schema.sql
+          else
+            echo 'supabase/schema.sql not found'; exit 1
+          fi
+
+      - name: Verify products table (REST check)
+        run: |
+          echo 'Checking products via REST API'
+          curl -sSf --fail "${SUPABASE_URL}/rest/v1/products?select=*" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" | jq '.' || (echo 'Products not available or empty' && exit 1)
