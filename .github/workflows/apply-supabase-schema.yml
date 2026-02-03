@@ -18,8 +18,13 @@ jobs:
           echo "SUPABASE_URL is set? ${SUPABASE_URL:+yes}"
           echo "SUPABASE_SERVICE_ROLE_KEY is set? ${SUPABASE_SERVICE_ROLE_KEY:+yes}"
 
-      - name: Install supabase CLI
-        run: npm install -g supabase
+      - name: Install supabase CLI binary
+        run: |
+          echo "Downloading supabase CLI"
+          curl -L "https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz" -o /tmp/supabase.tar.gz
+          mkdir -p /tmp/supabase && tar -xzvf /tmp/supabase.tar.gz -C /tmp/supabase
+          sudo mv /tmp/supabase/supabase /usr/local/bin/supabase
+          supabase --version
 
       - name: Apply SQL schema
         run: |
