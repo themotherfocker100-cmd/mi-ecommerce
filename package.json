@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "start": "live-server --port=3000 public --open=public/index.html",
+    "build": "echo \"No build step for static site\"",
+    "test": "echo \"No tests configured\""
   },
   "dependencies": {
     "next": "16.1.6",
@@ -21,6 +20,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "live-server": "^1.2.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
