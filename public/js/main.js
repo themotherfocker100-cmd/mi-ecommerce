@@ -110,6 +110,111 @@ function closeModal(){
   modal.setAttribute('aria-hidden', 'true')
 }
 
+// CART & CHECKOUT
+const cartBtn = document.querySelector('.cart')
+const cartModal = document.getElementById('cart-modal')
+const cartItemsEl = document.querySelector('.cart-items')
+const cartTotalValue = document.querySelector('.cart-total-value')
+const checkoutModal = document.getElementById('checkout-modal')
+const checkoutForm = document.getElementById('checkout-form')
+const checkoutMessage = document.querySelector('.checkout-message')
+
+function openCart(){
+  cartModal.setAttribute('aria-hidden', 'false')
+  renderCartItems()
+}
+
+function closeCart(){
+  cartModal.setAttribute('aria-hidden', 'true')
+}
+
+function renderCartItems(){
+  cartItemsEl.innerHTML = ''
+  if(cart.length === 0){
+    cartItemsEl.innerHTML = '<p>Tu carrito está vacío.</p>'
+    cartTotalValue.textContent = '€0'
+    return
+  }
+  let total = 0
+  cart.forEach(i => {
+    const row = document.createElement('div')
+    row.className = 'cart-row'
+    row.innerHTML = `
+      <div class="cart-row-title">${i.title}</div>
+      <div class="cart-row-qty">x${i.quantity}</div>
+      <div class="cart-row-price">${i.price || ''}</div>
+      <div class="cart-row-actions"><button class="btn ghost remove" data-id="${i.id}">Quitar</button></div>
+    `
+    row.querySelector('.remove').addEventListener('click', () => {
+      cart = cart.filter(x => x.id !== i.id)
+      updateCartUI()
+      renderCartItems()
+    })
+    cartItemsEl.appendChild(row)
+    const priceNumber = parseFloat((i.price || '0').replace(/[^0-9.]/g, '')) || 0
+    total += priceNumber * (i.quantity || 1)
+  })
+  cartTotalValue.textContent = `€${total.toFixed(2)}`
+}
+
+cartBtn?.addEventListener('click', openCart)
+cartModal?.querySelector('.close-cart')?.addEventListener('click', closeCart)
+cartModal?.querySelector('.modal-close')?.addEventListener('click', closeCart)
+
+// Checkout
+cartModal?.querySelector('.checkout-btn')?.addEventListener('click', () => {
+  closeCart()
+  checkoutModal.setAttribute('aria-hidden', 'false')
+})
+
+checkoutModal?.querySelector('.modal-close')?.addEventListener('click', () => checkoutModal.setAttribute('aria-hidden', 'true'))
+checkoutModal?.querySelector('#cancel-checkout')?.addEventListener('click', () => checkoutModal.setAttribute('aria-hidden', 'true'))
+
+checkoutForm?.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const form = new FormData(checkoutForm)
+  const payload = {
+    customer_name: form.get('name'),
+    customer_email: form.get('email'),
+    notes: form.get('notes'),
+    items: cart,
+    total: cart.reduce((s, i) => s + (parseFloat((i.price || '0').replace(/[^0-9.]/g, '')) || 0) * (i.quantity || 1), 0),
+    status: 'pending',
+    created_at: new Date().toISOString()
+  }
+
+  checkoutMessage.textContent = 'Procesando pedido...'
+
+  try{
+    // Try to insert order into Supabase 'orders' table. If RLS prevents it, we fallback.
+    const { data, error } = await supabase.from('orders').insert([payload])
+    if(error){
+      console.warn('Supabase insert error', error)
+      // fallback: save locally
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]')
+      orders.push(payload)
+      localStorage.setItem('orders', JSON.stringify(orders))
+      checkoutMessage.textContent = 'Pedido guardado localmente (supabase no permitió insert). Revisa la consola.'
+    } else {
+      checkoutMessage.textContent = 'Pedido enviado correctamente. ¡Gracias!'
+      cart = []
+      updateCartUI()
+    }
+  }catch(e){
+    console.warn('Order submit error', e)
+    checkoutMessage.textContent = 'Error al enviar el pedido. Se guardó localmente.'
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]')
+    orders.push(payload)
+    localStorage.setItem('orders', JSON.stringify(orders))
+  }
+
+  setTimeout(() => {
+    checkoutModal.setAttribute('aria-hidden', 'true')
+    checkoutMessage.textContent = ''
+    checkoutForm.reset()
+  }, 1500)
+})
+
 // Search and filter
 function applyFilters(){
   const q = searchInput.value.toLowerCase().trim()

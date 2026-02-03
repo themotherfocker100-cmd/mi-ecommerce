@@ -47,8 +47,17 @@ body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI'
 /* Modal */
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:80}
 .modal[aria-hidden="false"]{display:flex}
-.modal-content{background:linear-gradient(180deg,#0b0b0b,#0b0b0b);border-radius:.5rem;padding:1rem;max-width:720px;width:96%;box-shadow:0 12px 48px rgba(2,6,23,0.8)}
+.modal-content{background:linear-gradient(180deg,#0b0b0b,#0b0b0b);border-radius:.5rem;padding:1rem;max-width:720px;width:96%;box-shadow:0 12px 48px rgba(2,6,23,0.8);position:relative}
 .modal-close{position:absolute;right:1rem;top:1rem;background:none;border:none;color:var(--fg);font-size:1.4rem}
+
+/* Cart inside modal */
+.cart-items{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.cart-row{display:flex;gap:.5rem;align-items:center;justify-content:space-between;padding:.5rem;border-radius:.5rem;background:rgba(255,255,255,0.02)}
+.cart-row-title{font-weight:600}
+.cart-row-qty{color:var(--muted)}
+.cart-total{font-weight:700}
+
+.checkout-message{color:var(--muted)}
 
 /* Footer */
 .site-footer{padding:2rem 0;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted)}

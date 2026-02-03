@@ -73,6 +73,53 @@
       </div>
     </div>
 
+    <!-- Cart modal -->
+    <div id="cart-modal" class="modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <button class="modal-close" aria-label="Cerrar">×</button>
+        <div class="modal-body">
+          <h3>Carrito</h3>
+          <div class="cart-items"></div>
+          <div class="cart-footer">
+            <div class="cart-total">Total: <span class="cart-total-value">€0</span></div>
+            <div style="display:flex;gap:.5rem;margin-top:.75rem">
+              <button class="btn primary checkout-btn">Proceder al pago</button>
+              <button class="btn ghost close-cart">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkout modal -->
+    <div id="checkout-modal" class="modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <button class="modal-close" aria-label="Cerrar">×</button>
+        <div class="modal-body">
+          <h3>Checkout</h3>
+          <form id="checkout-form">
+            <label>
+              Nombre completo
+              <input name="name" required />
+            </label>
+            <label>
+              Email
+              <input name="email" type="email" required />
+            </label>
+            <label>
+              Comentarios (opcional)
+              <textarea name="notes" rows="3"></textarea>
+            </label>
+            <div style="display:flex;gap:.5rem;margin-top:.75rem">
+              <button class="btn primary" type="submit">Confirmar pedido</button>
+              <button class="btn ghost" type="button" id="cancel-checkout">Cancelar</button>
+            </div>
+            <div class="checkout-message" aria-live="polite" style="margin-top:.75rem"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <footer class="site-footer">
       <div class="container">
         <p>&copy; 2026 Los Palomos · Demo</p>
