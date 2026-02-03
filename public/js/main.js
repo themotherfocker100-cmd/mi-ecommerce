@@ -185,27 +185,39 @@ checkoutForm?.addEventListener('submit', async (e) => {
 
   checkoutMessage.textContent = 'Procesando pedido...'
 
+  // First try server endpoint (safer). If not available or fails, fall back to direct Supabase insert or local save.
   try{
-    // Try to insert order into Supabase 'orders' table. If RLS prevents it, we fallback.
-    const { data, error } = await supabase.from('orders').insert([payload])
-    if(error){
-      console.warn('Supabase insert error', error)
-      // fallback: save locally
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]')
-      orders.push(payload)
-      localStorage.setItem('orders', JSON.stringify(orders))
-      checkoutMessage.textContent = 'Pedido guardado localmente (supabase no permitió insert). Revisa la consola.'
-    } else {
-      checkoutMessage.textContent = 'Pedido enviado correctamente. ¡Gracias!'
+    const serverResp = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+
+    if (serverResp.ok) {
+      checkoutMessage.textContent = 'Pedido enviado correctamente (servidor). ¡Gracias!'
       cart = []
       updateCartUI()
+    } else {
+      // Try direct Supabase insert (may fail due to RLS)
+      const { data, error } = await supabase.from('orders').insert([payload])
+      if (error) {
+        console.warn('Supabase insert error', error)
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]')
+        orders.push(payload)
+        localStorage.setItem('orders', JSON.stringify(orders))
+        checkoutMessage.textContent = 'Pedido guardado localmente (no se pudo enviar). Revisa la consola.'
+      } else {
+        checkoutMessage.textContent = 'Pedido enviado correctamente (Supabase). ¡Gracias!'
+        cart = []
+        updateCartUI()
+      }
     }
-  }catch(e){
+  } catch (e) {
     console.warn('Order submit error', e)
-    checkoutMessage.textContent = 'Error al enviar el pedido. Se guardó localmente.'
     const orders = JSON.parse(localStorage.getItem('orders') || '[]')
     orders.push(payload)
     localStorage.setItem('orders', JSON.stringify(orders))
+    checkoutMessage.textContent = 'Error al enviar el pedido. Se guardó localmente.'
   }
 
   setTimeout(() => {
